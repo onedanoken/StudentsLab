@@ -8,16 +8,13 @@ namespace StudentsLab
 {
     class GradStudent : Student
     {
-        protected string education;
 
-        public string Education
+        public GradStudent() : base()
         {
-            get { return this.education; }
-            set { this.education = value; }
         }
         public GradStudent(string firstName, string surname, string faculty, string education) : base(firstName, surname, faculty) 
         {
-            this.education = education;
+            this.Education = education;
         }
     }
 }

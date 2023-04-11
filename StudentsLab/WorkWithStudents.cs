@@ -8,17 +8,46 @@ namespace StudentsLab
 {
     class WorkWithStudents
     {
-        public List<Student> AddStudent(Student student)
+        public List<Student> students; // массив студентов
+
+        public List<Student> Students 
+        { 
+            get { return this.students; } 
+            set { this.students = value; } 
+        }
+
+        public WorkWithStudents()
         {
-            this.students.Add(student);
+            students = new List<Student>();
+        }
+
+        public List<Student> GetStudents() 
+        { 
+            return this.students; 
+        }
+
+        public List<Student> AddStudent(GradStudent student) 
+        { 
+            students.Add(student);
             return this.students;
         }
 
-        public List<Student> RemoveStudent(Student student)
+        public List<Student> AddStudent(Bachelor student)
         {
-            this.students.Remove(student);
+            students.Add(student);
             return this.students;
         }
 
+        public List<Student> RemoveStudent(GradStudent student) 
+        { 
+            students.Remove(student);
+            return this.students;
+        }
+
+        public List<Student> RemoveStudent(Bachelor student)
+        {
+            students.Remove(student);
+            return this.students;
+        }
     }
 }

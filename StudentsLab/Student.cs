@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace StudentsLab
 {
-    class Student
+    abstract class Student
     {
         protected string firstName;
         protected string surname;
         protected string faculty;
+        protected string education;
 
         public string FirstName
         {
@@ -28,6 +29,18 @@ namespace StudentsLab
         {
             get { return this.faculty; }
             set { this.faculty = value; }
+        }
+
+        public string Education
+        {
+            get { return this.education; }
+            set { this.education = value; }
+        }
+        public Student()
+        {
+            this.firstName = null;
+            this.surname = null;
+            this.faculty = null;
         }
 
         public Student(string firstName, string surname, string faculty)
