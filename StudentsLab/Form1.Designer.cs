@@ -155,7 +155,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(22, 365);
+            this.label5.Location = new System.Drawing.Point(22, 331);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(42, 15);
             this.label5.TabIndex = 10;
@@ -163,15 +163,17 @@
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(233, 394);
+            this.textBox5.Location = new System.Drawing.Point(233, 360);
             this.textBox5.Name = "textBox5";
+            this.textBox5.ReadOnly = true;
             this.textBox5.Size = new System.Drawing.Size(159, 23);
             this.textBox5.TabIndex = 11;
+            this.textBox5.TextChanged += new System.EventHandler(this.textBox5_TextChanged);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(202, 397);
+            this.label6.Location = new System.Drawing.Point(202, 363);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(15, 15);
             this.label6.TabIndex = 12;
@@ -180,15 +182,17 @@
             // comboBox1
             // 
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.Enabled = false;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
             "Имя",
             "Фамилия",
             "Факультет"});
-            this.comboBox1.Location = new System.Drawing.Point(22, 394);
+            this.comboBox1.Location = new System.Drawing.Point(22, 360);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(163, 23);
             this.comboBox1.TabIndex = 13;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged_1);
             // 
             // menuStrip1
             // 
@@ -253,7 +257,7 @@
             // 
             this.следуюToolStripMenuItem.Enabled = false;
             this.следуюToolStripMenuItem.Name = "следуюToolStripMenuItem";
-            this.следуюToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.следуюToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.следуюToolStripMenuItem.Text = "Предыдущий";
             this.следуюToolStripMenuItem.Click += new System.EventHandler(this.следуюToolStripMenuItem_Click_1);
             // 
@@ -261,7 +265,7 @@
             // 
             this.следующийToolStripMenuItem.Enabled = false;
             this.следующийToolStripMenuItem.Name = "следующийToolStripMenuItem";
-            this.следующийToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.следующийToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.следующийToolStripMenuItem.Text = "Следующий";
             this.следующийToolStripMenuItem.Click += new System.EventHandler(this.следующийToolStripMenuItem_Click_1);
             // 

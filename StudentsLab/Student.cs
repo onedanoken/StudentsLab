@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace StudentsLab
 {
-    abstract class Student
+    [Serializable]
+    [XmlInclude(typeof(GradStudent))]
+    [XmlInclude(typeof(Bachelor))]
+    public abstract class Student
     {
-        protected string firstName;
-        protected string surname;
-        protected string faculty;
-        protected string education;
+        public string firstName;
+        public string surname;
+        public string faculty;
+        public string education;
 
         public string FirstName
         {

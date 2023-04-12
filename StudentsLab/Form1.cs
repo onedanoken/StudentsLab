@@ -1,5 +1,6 @@
+using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Newtonsoft.Json;
+using System.Xml.Serialization;
 
 namespace StudentsLab
 {
@@ -38,6 +39,19 @@ namespace StudentsLab
             }
         }
 
+        public void EnableForm()
+        {
+            textBox1.ReadOnly = false;
+            textBox2.ReadOnly = false;
+            textBox3.ReadOnly = false;
+            textBox4.ReadOnly = false;
+            добавить—тудентаToolStripMenuItem.Enabled = true;
+            удалить—тудентаToolStripMenuItem.Enabled = true;
+            // создатьЌовый‘айлToolStripMenuItem.Enabled = false;
+            сохранить‘айлToolStripMenuItem.Enabled = true;
+            comboBox1.Enabled = true;
+        }
+
         public void checkFirstLastOrNull()
         {
             if (students.Students.Count > 0)
@@ -71,6 +85,59 @@ namespace StudentsLab
                 следующийToolStripMenuItem.Enabled = false;
                 удалить—тудентаToolStripMenuItem.Enabled = false;
             }
+        }
+
+        public void AddStudent()
+        {
+            Form2 f = new Form2();
+            f.ShowDialog();
+            int result = f.Result;
+            if (result == 1)
+            {
+                students.Students.Add(new Bachelor());
+                if (students.Students.Count == 1)
+                {
+                    textBox1.ReadOnly = false;
+                    textBox2.ReadOnly = false;
+                    textBox3.ReadOnly = false;
+                    textBox4.ReadOnly = false;
+                    удалить—тудентаToolStripMenuItem.Enabled = true;
+                    сохранить‘айлToolStripMenuItem.Enabled = true;
+                }
+                button3.Visible = true;
+                textBox1.Text = null;
+                textBox2.Text = null;
+                textBox3.Text = null;
+                textBox4.Text = null;
+                textBox4.Visible = false;
+                label4.Visible = false;
+                checkFirstLastOrNull();
+            }
+            else
+            {
+                students.Students.Add(new GradStudent());
+                if (students.Students.Count == 1)
+                {
+                    textBox1.ReadOnly = false;
+                    textBox2.ReadOnly = false;
+                    textBox3.ReadOnly = false;
+                    textBox4.ReadOnly = false;
+                    удалить—тудентаToolStripMenuItem.Enabled = true;
+                    сохранить‘айлToolStripMenuItem.Enabled = true;
+                }
+                button3.Visible = false;
+                textBox1.Text = null;
+                textBox2.Text = null;
+                textBox3.Text = null;
+                textBox4.Text = null;
+                textBox4.Visible = true;
+                label4.Visible = true;
+            }
+        }
+
+        public void CheckStudent()
+        {
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -180,18 +247,12 @@ namespace StudentsLab
             MessageBox.Show("—оздан файл! ѕо умолчанию создан 1 студент-бакалавр. ƒл€ того, чтобы пополнить список, " +
                 "добавьте студента во вкладке: —туденты -> ƒобавить студента \nƒл€ того чтобы сделать студента магистром, нажмите на кнопку: —делать магистром", 
                 "Ќовый список", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            textBox1.ReadOnly = false;
-            textBox2.ReadOnly = false;
-            textBox3.ReadOnly = false;
-            textBox4.ReadOnly = false;
-            button3.Visible = true;
-            добавить—тудентаToolStripMenuItem.Enabled = true;
-            удалить—тудентаToolStripMenuItem.Enabled = true;
             students = new WorkWithStudents();
+            currentStudent = 0;
             students.Students.Add(new Bachelor());
-            создатьЌовый‘айлToolStripMenuItem.Enabled = false;
-            сохранить‘айлToolStripMenuItem.Enabled = true;
-
+            EnableForm();
+            ShowInfo();
+            checkFirstLastOrNull();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -199,6 +260,7 @@ namespace StudentsLab
             button3.Visible = false;
             label4.Visible = true;
             textBox4.Visible = true;
+            textBox4.ReadOnly = false;
             var tmpFirstName = students.Students[currentStudent].FirstName;
             var tmpSurname = students.Students[currentStudent].Surname;
             var tmpFaculty = students.Students[currentStudent].Faculty;
@@ -229,23 +291,7 @@ namespace StudentsLab
             {
                 currentStudent++;
             }
-            students.Students.Add(new Bachelor());
-            if (students.Students.Count == 1) 
-            {
-                textBox1.ReadOnly = false;
-                textBox2.ReadOnly = false;
-                textBox3.ReadOnly = false;
-                textBox4.ReadOnly = false;
-                удалить—тудентаToolStripMenuItem.Enabled = true;
-                сохранить‘айлToolStripMenuItem.Enabled = true;
-            }
-            button3.Visible = true;
-            textBox1.Text = null;
-            textBox2.Text = null;
-            textBox3.Text = null;
-            textBox4.Text = null;
-            textBox4.Visible = false;
-            label4.Visible= false;
+            AddStudent();
             checkFirstLastOrNull();
         }
 
@@ -293,23 +339,103 @@ namespace StudentsLab
 
         private void сохранить‘айлToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            using (StreamWriter file = File.CreateText("students.json"))
-            {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(file, students.Students);
-            }
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "XML файлы(*.xml)|*.xml";
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.DefaultExt = ".xml";
+            if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+            FileStream writer = new FileStream(saveFileDialog.FileName, FileMode.Create);
+            XmlSerializer serializer= new XmlSerializer(typeof(List<Student>));
+            serializer.Serialize(writer, students.Students);
+            writer.Close();
+            MessageBox.Show("‘айл сохранЄн");
         }
 
         private void открыть‘айлToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            List<Student> tmp = students.Students;
-            XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
-            using (TextWriter writer = new StreamWriter("spisok.xml"))
+            students = new WorkWithStudents();
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "XML файлы(*.xml)|*.xml";
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.RestoreDirectory = true;
+            if (openFileDialog.ShowDialog() == DialogResult.Cancel)
+                return;
+            try
             {
-                serializer.Serialize(writer, tmp);
+                FileStream reader = new FileStream(openFileDialog.FileName, FileMode.Open);
+                XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
+                students.Students = new List<Student>(serializer.Deserialize(reader) as List<Student>);
+                reader.Close();
+                currentStudent = 0;
+                ShowInfo();
+                checkFirstLastOrNull();
+                EnableForm();
             }
-            currentStudent = 0;
-            ShowInfo();
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox5.Text == "")
+                return;
+            if (students.Students.Count == 1) 
+                return;
+            string v = comboBox1.SelectedItem.ToString();
+            string template = textBox5.Text;
+            switch (v)
+            {
+                case "»м€":
+                    for (int i = 0; i < students.Students.Count; ++i)
+                    {
+                        if (students.Students[i].firstName != null) { 
+                            if (students.Students[i].firstName.StartsWith(template))
+                            {
+                                currentStudent = i;
+                                ShowInfo();
+                            }
+                        }
+                    }
+                    break;
+                case "‘амили€":
+                    for (int i = 0; i < students.Students.Count; ++i)
+                    {
+                        if (students.Students[i].Surname != null)
+                        {
+                            if (students.Students[i].Surname.StartsWith(template))
+                            {
+                                currentStudent = i;
+                                ShowInfo();
+                            }
+                        }
+                    }
+                    break;
+                case "‘акультет":
+                    for (int i = 0; i < students.Students.Count; ++i)
+                    {
+                        if (students.Students[i].Faculty != null)
+                        {
+                            if (students.Students[i].Faculty.StartsWith(template))
+                            {
+                                currentStudent = i;
+                                ShowInfo();
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            textBox5.ReadOnly = false;
+        }
+
     }
 }

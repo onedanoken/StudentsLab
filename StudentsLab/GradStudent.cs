@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace StudentsLab
 {
-    class GradStudent : Student
+    [Serializable]
+    public class GradStudent : Student
     {
 
         public GradStudent() : base()

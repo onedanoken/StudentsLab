@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace StudentsLab
 {
-    class WorkWithStudents
+    [Serializable]
+    public class WorkWithStudents
     {
         public List<Student> students; // массив студентов
 
