@@ -52,9 +52,27 @@ namespace StudentsLab
             comboBox1.Enabled = true;
         }
 
-        public void checkFirstLastOrNull()
+        public void NoStudent()
         {
-            if (students.Students.Count > 0)
+            textBox1.Text = "";
+            textBox2.Text = "";
+            textBox3.Text = "";
+            textBox4.Text = "";
+            textBox1.ReadOnly = true;
+            textBox2.ReadOnly = true;
+            textBox3.ReadOnly = true;
+            textBox4.ReadOnly = true;
+            label4.Visible = false;
+            textBox4.Visible = false;
+            ÒÎÂ‰Û˛ToolStripMenuItem.Enabled = false;
+            ÒÎÂ‰Û˛˘ËÈToolStripMenuItem.Enabled = false;
+            button1.Enabled = false;
+            button2.Enabled = false;
+        }
+
+        public void checkFirstLastOrNull(int count)
+        {
+            if (count > 0)
             {
                 if (currentStudent == 0)
                 {
@@ -77,7 +95,7 @@ namespace StudentsLab
                     ÒÎÂ‰Û˛˘ËÈToolStripMenuItem.Enabled = true;
                 }
             }
-            else if (students.Students.Count == 0 || students.Students == null)
+            else if (count == 0 || count == null)
             {
                 button1.Enabled = false;
                 button2.Enabled = false;
@@ -87,7 +105,7 @@ namespace StudentsLab
             }
         }
 
-        public void AddStudent()
+        public bool AddStudent()
         {
             Form2 f = new Form2();
             f.ShowDialog();
@@ -111,9 +129,10 @@ namespace StudentsLab
                 textBox4.Text = null;
                 textBox4.Visible = false;
                 label4.Visible = false;
-                checkFirstLastOrNull();
+                checkFirstLastOrNull(students.Students.Count);
+                return true;
             }
-            else
+            else if (result == 2)
             {
                 students.Students.Add(new GradStudent());
                 if (students.Students.Count == 1)
@@ -132,12 +151,15 @@ namespace StudentsLab
                 textBox4.Text = null;
                 textBox4.Visible = true;
                 label4.Visible = true;
+                return true;
             }
+            else
+                return false;
         }
 
         public void CheckStudent()
         {
-
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -252,7 +274,7 @@ namespace StudentsLab
             students.Students.Add(new Bachelor());
             EnableForm();
             ShowInfo();
-            checkFirstLastOrNull();
+            checkFirstLastOrNull(students.Students.Count);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -272,27 +294,31 @@ namespace StudentsLab
         {
             currentStudent++;
             ShowInfo();
-            checkFirstLastOrNull();
+            checkFirstLastOrNull(students.Students.Count);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             currentStudent--;
             ShowInfo();
-            checkFirstLastOrNull();
+            checkFirstLastOrNull(students.Students.Count);
         }
 
         private void ‰Ó·‡‚ËÚ¸—ÚÛ‰ÂÌÚ‡ToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            if (currentStudent < students.Students.Count - 1)
+            
+            if(AddStudent())
             {
-                currentStudent = students.Students.Count;
-            } else
-            {
-                currentStudent++;
+                if (currentStudent < students.Students.Count - 1)
+                {
+                    currentStudent = students.Students.Count;
+                }
+                else
+                {
+                    currentStudent++;
+                }
             }
-            AddStudent();
-            checkFirstLastOrNull();
+            checkFirstLastOrNull(students.Students.Count);
         }
 
         private void Û‰‡ÎËÚ¸—ÚÛ‰ÂÌÚ‡ToolStripMenuItem_Click_1(object sender, EventArgs e)
@@ -301,11 +327,11 @@ namespace StudentsLab
             if (currentStudent > students.Students.Count - 1 && students.Students.Count != 0)
             {
                 currentStudent = students.Students.Count - 1;
-                checkFirstLastOrNull();
+                checkFirstLastOrNull(students.Students.Count);
                 ShowInfo();
             } else if (students.Students.Count == 0)
             {
-                checkFirstLastOrNull();
+                checkFirstLastOrNull(students.Students.Count);
                 currentStudent = -1;
                 textBox1.Text = "";
                 textBox2.Text = "";
@@ -319,10 +345,12 @@ namespace StudentsLab
                 label4.Visible = false;
                 textBox4.Visible = false;
                 ÒÓı‡ÌËÚ¸‘‡ÈÎToolStripMenuItem.Enabled = false;
+                comboBox1.Enabled = false;
+                textBox5.Enabled = false;
             }
             else
             {
-                checkFirstLastOrNull();
+                checkFirstLastOrNull(students.Students.Count);
                 ShowInfo();
             }
         }
@@ -370,7 +398,7 @@ namespace StudentsLab
                 reader.Close();
                 currentStudent = 0;
                 ShowInfo();
-                checkFirstLastOrNull();
+                checkFirstLastOrNull(students.Students.Count);
                 EnableForm();
             }
             catch (Exception ex)
@@ -381,6 +409,7 @@ namespace StudentsLab
 
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
+            List<int> indexes = new List<int>();
             if (textBox5.Text == "")
                 return;
             if (students.Students.Count == 1) 
@@ -395,9 +424,20 @@ namespace StudentsLab
                         if (students.Students[i].firstName != null) { 
                             if (students.Students[i].firstName.StartsWith(template))
                             {
-                                currentStudent = i;
-                                ShowInfo();
+                                indexes.Add(i);
                             }
+                        }
+                    }
+                    if (indexes.Count == 0)
+                    {
+                        NoStudent();
+                    }
+                    else
+                    {
+                        currentStudent = indexes[0];
+                        while (true) 
+                        {
+                            ShowInfo();
                         }
                     }
                     break;
