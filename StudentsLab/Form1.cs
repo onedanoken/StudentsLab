@@ -7,8 +7,9 @@ namespace StudentsLab
     public partial class Form1 : Form
     {
         WorkWithStudents students;
-        int currentStudent = 0; // òåêóùèé ñòóäåíò
-        List<int> indexes = new List<int>(); // ëèñò èíäåêñîâ (äëÿ ïóíêòà 7)
+        int currentStudent = 0; // òåêóùèé ñòóäåíò.
+        string path = ""; // ïóòü äëÿ ñîõğàíåíèÿ òåêóùåãî ôàéëà, åñëè îí óæå áûë ñîõğàíåí â îïğåäåë¸ííîì ìåñòå.
+        List<int> indexes = new List<int>(); // ëèñò èíäåêñîâ (äëÿ ïóíêòà 7).
         int index = 0;
 
         public Form1()
@@ -25,12 +26,18 @@ namespace StudentsLab
                 textBox1.Text = students.Students[currentStudent].FirstName;
                 textBox2.Text = students.Students[currentStudent].Surname;
                 textBox3.Text = students.Students[currentStudent].Faculty;
+                textBox1.Visible = true;
+                textBox2.Visible = true;
+                textBox3.Visible = true;
                 textBox4.Visible = false;
                 label4.Visible = false;
                 button3.Visible = true;
             }
             else
             {
+                textBox1.Visible = true;
+                textBox2.Visible = true;
+                textBox3.Visible = true;
                 textBox4.Visible = true;
                 label4.Visible = true;
                 textBox1.Text = students.Students[currentStudent].FirstName;
@@ -39,6 +46,18 @@ namespace StudentsLab
                 textBox4.Text = students.Students[currentStudent].Education;
                 button3.Visible = false;
             }
+        }
+
+        public void UnlockFunc()
+        {
+            textBox1.ReadOnly = false;
+            textBox2.ReadOnly = false;
+            textBox3.ReadOnly = false;
+            textBox4.ReadOnly = false;
+            óäàëèòüÑòóäåíòàToolStripMenuItem.Enabled = true;
+            ñîõğàíèòüÔàéëToolStripMenuItem.Enabled = true;
+            ñîõğàíèòüToolStripMenuItem.Enabled = true;
+            comboBox1.Enabled = true;
         }
 
         public void EnableForm()
@@ -51,7 +70,9 @@ namespace StudentsLab
             óäàëèòüÑòóäåíòàToolStripMenuItem.Enabled = true;
             // ñîçäàòüÍîâûéÔàéëToolStripMenuItem.Enabled = false;
             ñîõğàíèòüÔàéëToolStripMenuItem.Enabled = true;
+            ñîõğàíèòüToolStripMenuItem.Enabled = true;
             comboBox1.Enabled = true;
+            textBox5.Text = null;
         }
 
         public void NoStudent()
@@ -60,6 +81,9 @@ namespace StudentsLab
             textBox2.ReadOnly = true;
             textBox3.ReadOnly = true;
             textBox4.ReadOnly = true;
+            textBox1.Visible = false;
+            textBox2.Visible = false;
+            textBox3.Visible = false;
             label4.Visible = false;
             textBox4.Visible = false;
             ñëåäóşToolStripMenuItem.Enabled = false;
@@ -115,12 +139,7 @@ namespace StudentsLab
                 index = students.Students.Count - 1;
                 if (students.Students.Count == 1)
                 {
-                    textBox1.ReadOnly = false;
-                    textBox2.ReadOnly = false;
-                    textBox3.ReadOnly = false;
-                    textBox4.ReadOnly = false;
-                    óäàëèòüÑòóäåíòàToolStripMenuItem.Enabled = true;
-                    ñîõğàíèòüÔàéëToolStripMenuItem.Enabled = true;
+                    UnlockFunc();
                 }
                 button3.Visible = true;
                 currentStudent = indexes[index];
@@ -140,12 +159,7 @@ namespace StudentsLab
                 index = students.Students.Count - 1;
                 if (students.Students.Count == 1)
                 {
-                    textBox1.ReadOnly = false;
-                    textBox2.ReadOnly = false;
-                    textBox3.ReadOnly = false;
-                    textBox4.ReadOnly = false;
-                    óäàëèòüÑòóäåíòàToolStripMenuItem.Enabled = true;
-                    ñîõğàíèòüÔàéëToolStripMenuItem.Enabled = true;
+                    UnlockFunc();
                 }
                 button3.Visible = false;
                 currentStudent = indexes[index];
@@ -272,6 +286,7 @@ namespace StudentsLab
             students = new WorkWithStudents();
             indexes = new List<int>();
             students.Students.Add(new Bachelor());
+            index = 0;
             indexes.Add(0);
             currentStudent = indexes[index];
             EnableForm();
@@ -320,6 +335,10 @@ namespace StudentsLab
         {
             students.Students.RemoveAt(currentStudent);
             indexes.Remove(currentStudent);
+            indexes = new List<int>();
+            for (int i = 0; i < students.Students.Count; i++)
+                indexes.Add(i);
+
             if (index > students.Students.Count - 1 && indexes.Count != 0)
             {
                 index = students.Students.Count - 1;
@@ -343,6 +362,7 @@ namespace StudentsLab
                 label4.Visible = false;
                 textBox4.Visible = false;
                 ñîõğàíèòüÔàéëToolStripMenuItem.Enabled = false;
+                ñîõğàíèòüToolStripMenuItem.Enabled = false;
                 comboBox1.Enabled = false;
                 textBox5.Enabled = false;
             }
@@ -373,10 +393,11 @@ namespace StudentsLab
             if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
                 return;
             FileStream writer = new FileStream(saveFileDialog.FileName, FileMode.Create);
+            path = saveFileDialog.FileName;
             XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
             serializer.Serialize(writer, students.Students);
             writer.Close();
-            MessageBox.Show("Ôàéë ñîõğàí¸í");
+            MessageBox.Show("Ôàéë ñîõğàí¸í", "Ñòóäåíòû", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void îòêğûòüÔàéëToolStripMenuItem_Click_1(object sender, EventArgs e)
@@ -391,6 +412,7 @@ namespace StudentsLab
             try
             {
                 FileStream reader = new FileStream(openFileDialog.FileName, FileMode.Open);
+                path = openFileDialog.FileName;
                 XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
                 students.Students = new List<Student>(serializer.Deserialize(reader) as List<Student>);
                 indexes = new List<int>();
@@ -404,6 +426,7 @@ namespace StudentsLab
                 ShowInfo();
                 checkFirstLastOrNull(indexes.Count());
                 EnableForm();
+                textBox5.Text = "";
             }
             catch (Exception ex)
             {
@@ -415,6 +438,12 @@ namespace StudentsLab
         {
             if (textBox5.Text == "")
             {
+                äîáàâèòüÑòóäåíòàToolStripMenuItem.Enabled = true;
+                óäàëèòüÑòóäåíòàToolStripMenuItem.Enabled = true;
+                textBox1.ReadOnly = false;
+                textBox2.ReadOnly = false;
+                textBox3.ReadOnly = false;
+                textBox4.ReadOnly = false;
                 indexes = new List<int>();
                 for (int i = 0; i < students.Students.Count(); ++i)
                 {
@@ -422,12 +451,13 @@ namespace StudentsLab
                 }
                 index = currentStudent;
                 currentStudent = indexes[index];
+                ShowInfo();
                 checkFirstLastOrNull(indexes.Count);
                 return;
             }
 
-            if (students.Students.Count == 1)
-                return;
+            äîáàâèòüÑòóäåíòàToolStripMenuItem.Enabled = false;
+            óäàëèòüÑòóäåíòàToolStripMenuItem.Enabled = false;
             string v = comboBox1.SelectedItem.ToString();
             string template = textBox5.Text;
             indexes = new List<int>();
@@ -537,7 +567,21 @@ namespace StudentsLab
         private void comboBox1_SelectedIndexChanged_1(object sender, EventArgs e)
         {
             textBox5.ReadOnly = false;
+            textBox5.Enabled = true;
         }
 
+        private void ñîõğàíèòüToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (path == "")
+            {
+                ñîõğàíèòüÔàéëToolStripMenuItem_Click_1(sender, e);
+                return;
+            }
+            FileStream writer = new FileStream(path, FileMode.Create);
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
+            serializer.Serialize(writer, students.Students);
+            writer.Close();
+            MessageBox.Show("Ôàéë ñîõğàí¸í", "Ñòóäåíòû", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 }
