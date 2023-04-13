@@ -7,7 +7,9 @@ namespace StudentsLab
     public partial class Form1 : Form
     {
         WorkWithStudents students;
-        int currentStudent = 0; // указатель на текущего студента
+        int currentStudent = 0; // текущий студент
+        List<int> indexes = new List<int>(); // лист индексов (для пункта 7)
+        int index = 0;
 
         public Form1()
         {
@@ -54,10 +56,6 @@ namespace StudentsLab
 
         public void NoStudent()
         {
-            textBox1.Text = "";
-            textBox2.Text = "";
-            textBox3.Text = "";
-            textBox4.Text = "";
             textBox1.ReadOnly = true;
             textBox2.ReadOnly = true;
             textBox3.ReadOnly = true;
@@ -74,17 +72,17 @@ namespace StudentsLab
         {
             if (count > 0)
             {
-                if (currentStudent == 0)
+                if (index == 0)
                 {
                     button1.Enabled = false;
                     следуюToolStripMenuItem.Enabled = false;
-                } 
+                }
                 else
                 {
                     button1.Enabled = true;
                     следуюToolStripMenuItem.Enabled = true;
                 }
-                if (currentStudent == students.Students.Count - 1)
+                if (index == count - 1)
                 {
                     button2.Enabled = false;
                     следующийToolStripMenuItem.Enabled = false;
@@ -112,7 +110,9 @@ namespace StudentsLab
             int result = f.Result;
             if (result == 1)
             {
+                indexes.Add(students.Students.Count);
                 students.Students.Add(new Bachelor());
+                index = students.Students.Count - 1;
                 if (students.Students.Count == 1)
                 {
                     textBox1.ReadOnly = false;
@@ -123,18 +123,21 @@ namespace StudentsLab
                     сохранитьФайлToolStripMenuItem.Enabled = true;
                 }
                 button3.Visible = true;
+                currentStudent = indexes[index];
                 textBox1.Text = null;
                 textBox2.Text = null;
                 textBox3.Text = null;
                 textBox4.Text = null;
                 textBox4.Visible = false;
                 label4.Visible = false;
-                checkFirstLastOrNull(students.Students.Count);
+                checkFirstLastOrNull(indexes.Count);
                 return true;
             }
             else if (result == 2)
             {
+                indexes.Add(students.Students.Count);
                 students.Students.Add(new GradStudent());
+                index = students.Students.Count - 1;
                 if (students.Students.Count == 1)
                 {
                     textBox1.ReadOnly = false;
@@ -145,21 +148,18 @@ namespace StudentsLab
                     сохранитьФайлToolStripMenuItem.Enabled = true;
                 }
                 button3.Visible = false;
+                currentStudent = indexes[index];
                 textBox1.Text = null;
                 textBox2.Text = null;
                 textBox3.Text = null;
                 textBox4.Text = null;
                 textBox4.Visible = true;
                 label4.Visible = true;
+                checkFirstLastOrNull(indexes.Count);
                 return true;
             }
             else
                 return false;
-        }
-
-        public void CheckStudent()
-        {
-            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -204,7 +204,7 @@ namespace StudentsLab
 
         private async void открытьФайлToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           
+
         }
 
         private void создатьНовыйФайлToolStripMenuItem_Click(object sender, EventArgs e)
@@ -214,7 +214,7 @@ namespace StudentsLab
 
         private void сохранитьФайлToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void следующийToolStripMenuItem_Click(object sender, EventArgs e)
@@ -267,11 +267,13 @@ namespace StudentsLab
         private void создатьНовыйФайлToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             MessageBox.Show("Создан файл! По умолчанию создан 1 студент-бакалавр. Для того, чтобы пополнить список, " +
-                "добавьте студента во вкладке: Студенты -> Добавить студента \nДля того чтобы сделать студента магистром, нажмите на кнопку: Сделать магистром", 
+                "добавьте студента во вкладке: Студенты -> Добавить студента \nДля того чтобы сделать студента магистром, нажмите на кнопку: Сделать магистром",
                 "Новый список", MessageBoxButtons.OK, MessageBoxIcon.Information);
             students = new WorkWithStudents();
-            currentStudent = 0;
+            indexes = new List<int>();
             students.Students.Add(new Bachelor());
+            indexes.Add(0);
+            currentStudent = indexes[index];
             EnableForm();
             ShowInfo();
             checkFirstLastOrNull(students.Students.Count);
@@ -292,47 +294,43 @@ namespace StudentsLab
 
         private void button2_Click(object sender, EventArgs e)
         {
-            currentStudent++;
+            index++;
+            currentStudent = indexes[index];
             ShowInfo();
-            checkFirstLastOrNull(students.Students.Count);
+            checkFirstLastOrNull(indexes.Count);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            currentStudent--;
+            index--;
+            currentStudent = indexes[index];
             ShowInfo();
-            checkFirstLastOrNull(students.Students.Count);
+            checkFirstLastOrNull(indexes.Count);
         }
 
         private void добавитьСтудентаToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            
-            if(AddStudent())
-            {
-                if (currentStudent < students.Students.Count - 1)
-                {
-                    currentStudent = students.Students.Count;
-                }
-                else
-                {
-                    currentStudent++;
-                }
-            }
-            checkFirstLastOrNull(students.Students.Count);
+
+            AddStudent();
+            currentStudent = indexes[index];
+            checkFirstLastOrNull(indexes.Count);
         }
 
         private void удалитьСтудентаToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
             students.Students.RemoveAt(currentStudent);
-            if (currentStudent > students.Students.Count - 1 && students.Students.Count != 0)
+            indexes.Remove(currentStudent);
+            if (index > students.Students.Count - 1 && indexes.Count != 0)
             {
-                currentStudent = students.Students.Count - 1;
-                checkFirstLastOrNull(students.Students.Count);
+                index = students.Students.Count - 1;
+                currentStudent = indexes[index];
+                checkFirstLastOrNull(indexes.Count);
                 ShowInfo();
-            } else if (students.Students.Count == 0)
+            }
+            else if (students.Students.Count == 0)
             {
-                checkFirstLastOrNull(students.Students.Count);
-                currentStudent = -1;
+                checkFirstLastOrNull(indexes.Count);
+                index = -1;
                 textBox1.Text = "";
                 textBox2.Text = "";
                 textBox3.Text = "";
@@ -350,7 +348,7 @@ namespace StudentsLab
             }
             else
             {
-                checkFirstLastOrNull(students.Students.Count);
+                checkFirstLastOrNull(indexes.Count);
                 ShowInfo();
             }
         }
@@ -375,7 +373,7 @@ namespace StudentsLab
             if (saveFileDialog.ShowDialog() == DialogResult.Cancel)
                 return;
             FileStream writer = new FileStream(saveFileDialog.FileName, FileMode.Create);
-            XmlSerializer serializer= new XmlSerializer(typeof(List<Student>));
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
             serializer.Serialize(writer, students.Students);
             writer.Close();
             MessageBox.Show("Файл сохранён");
@@ -395,10 +393,16 @@ namespace StudentsLab
                 FileStream reader = new FileStream(openFileDialog.FileName, FileMode.Open);
                 XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
                 students.Students = new List<Student>(serializer.Deserialize(reader) as List<Student>);
+                indexes = new List<int>();
+                for (int i = 0; i < students.Students.Count; i++)
+                {
+                    indexes.Add(i);
+                }
                 reader.Close();
-                currentStudent = 0;
+                index = 0;
+                currentStudent = indexes[index];
                 ShowInfo();
-                checkFirstLastOrNull(students.Students.Count);
+                checkFirstLastOrNull(indexes.Count());
                 EnableForm();
             }
             catch (Exception ex)
@@ -409,19 +413,31 @@ namespace StudentsLab
 
         private void textBox5_TextChanged(object sender, EventArgs e)
         {
-            List<int> indexes = new List<int>();
             if (textBox5.Text == "")
+            {
+                indexes = new List<int>();
+                for (int i = 0; i < students.Students.Count(); ++i)
+                {
+                    indexes.Add(i);
+                }
+                index = currentStudent;
+                currentStudent = indexes[index];
+                checkFirstLastOrNull(indexes.Count);
                 return;
-            if (students.Students.Count == 1) 
+            }
+
+            if (students.Students.Count == 1)
                 return;
             string v = comboBox1.SelectedItem.ToString();
             string template = textBox5.Text;
+            indexes = new List<int>();
             switch (v)
             {
                 case "Имя":
                     for (int i = 0; i < students.Students.Count; ++i)
                     {
-                        if (students.Students[i].firstName != null) { 
+                        if (students.Students[i].firstName != null)
+                        {
                             if (students.Students[i].firstName.StartsWith(template))
                             {
                                 indexes.Add(i);
@@ -434,11 +450,11 @@ namespace StudentsLab
                     }
                     else
                     {
-                        currentStudent = indexes[0];
-                        while (true) 
-                        {
-                            ShowInfo();
-                        }
+                        index = 0;
+                        currentStudent = indexes[index];
+                        ShowInfo();
+                        checkFirstLastOrNull(indexes.Count);
+                        return;
                     }
                     break;
                 case "Фамилия":
@@ -448,10 +464,22 @@ namespace StudentsLab
                         {
                             if (students.Students[i].Surname.StartsWith(template))
                             {
-                                currentStudent = i;
-                                ShowInfo();
+                                indexes.Add(i);
                             }
                         }
+                    }
+                    if (indexes.Count == 0)
+                    {
+                        NoStudent();
+                        return;
+                    }
+                    else
+                    {
+                        index = 0;
+                        currentStudent = indexes[index];
+                        ShowInfo();
+                        checkFirstLastOrNull(indexes.Count);
+                        return;
                     }
                     break;
                 case "Факультет":
@@ -461,13 +489,47 @@ namespace StudentsLab
                         {
                             if (students.Students[i].Faculty.StartsWith(template))
                             {
-                                currentStudent = i;
-                                ShowInfo();
+                                indexes.Add(i);
                             }
                         }
                     }
+                    if (indexes.Count == 0)
+                    {
+                        NoStudent();
+                        return;
+                    }
+                    else
+                    {
+                        index = 0;
+                        currentStudent = indexes[index];
+                        ShowInfo();
+                        checkFirstLastOrNull(indexes.Count);
+                        return;
+                    }
                     break;
                 default:
+                    for (int i = 0; i < students.Students.Count; ++i)
+                    {
+                        if (students.Students[i].Education != null)
+                        {
+                            if (students.Students[i].Education.StartsWith(template))
+                            {
+                                indexes.Add(i);
+                            }
+                        }
+                    }
+                    if (indexes.Count == 0)
+                    {
+                        NoStudent();
+                    }
+                    else
+                    {
+                        index = 0;
+                        currentStudent = indexes[index];
+                        ShowInfo();
+                        checkFirstLastOrNull(indexes.Count);
+                        return;
+                    }
                     break;
             }
         }

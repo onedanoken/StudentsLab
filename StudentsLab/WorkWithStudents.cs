@@ -27,28 +27,5 @@ namespace StudentsLab
             return this.students; 
         }
 
-        public List<Student> AddStudent(GradStudent student) 
-        { 
-            students.Add(student);
-            return this.students;
-        }
-
-        public List<Student> AddStudent(Bachelor student)
-        {
-            students.Add(student);
-            return this.students;
-        }
-
-        public List<Student> RemoveStudent(GradStudent student) 
-        { 
-            students.Remove(student);
-            return this.students;
-        }
-
-        public List<Student> RemoveStudent(Bachelor student)
-        {
-            students.Remove(student);
-            return this.students;
-        }
     }
 }
