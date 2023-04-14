@@ -335,9 +335,21 @@ namespace StudentsLab
         {
             students.Students.RemoveAt(currentStudent);
             indexes.Remove(currentStudent);
-            indexes = new List<int>();
-            for (int i = 0; i < students.Students.Count; i++)
-                indexes.Add(i);
+            if (textBox5.Text == "")
+            {
+                indexes = new List<int>();
+                for (int i = 0; i < students.Students.Count; i++)
+                    indexes.Add(i);
+            } else
+            {
+                textBox5_TextChanged(sender, e);
+                if (indexes.Count == 0)
+                {
+                    NoStudent();
+                    return;
+                }
+            }
+            
 
             if (index > students.Students.Count - 1 && indexes.Count != 0)
             {
@@ -402,7 +414,6 @@ namespace StudentsLab
 
         private void îòêğûòüÔàéëToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
-            students = new WorkWithStudents();
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "XML ôàéëû(*.xml)|*.xml";
             openFileDialog.FilterIndex = 1;
@@ -414,6 +425,7 @@ namespace StudentsLab
                 FileStream reader = new FileStream(openFileDialog.FileName, FileMode.Open);
                 path = openFileDialog.FileName;
                 XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
+                students = new WorkWithStudents();
                 students.Students = new List<Student>(serializer.Deserialize(reader) as List<Student>);
                 indexes = new List<int>();
                 for (int i = 0; i < students.Students.Count; i++)
@@ -439,7 +451,6 @@ namespace StudentsLab
             if (textBox5.Text == "")
             {
                 äîáàâèòüÑòóäåíòàToolStripMenuItem.Enabled = true;
-                óäàëèòüÑòóäåíòàToolStripMenuItem.Enabled = true;
                 textBox1.ReadOnly = false;
                 textBox2.ReadOnly = false;
                 textBox3.ReadOnly = false;
@@ -457,7 +468,6 @@ namespace StudentsLab
             }
 
             äîáàâèòüÑòóäåíòàToolStripMenuItem.Enabled = false;
-            óäàëèòüÑòóäåíòàToolStripMenuItem.Enabled = false;
             string v = comboBox1.SelectedItem.ToString();
             string template = textBox5.Text;
             indexes = new List<int>();
